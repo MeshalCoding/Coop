@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نموذج التسجيل</title>
+  <style>
+    /* تنسيق الخلفية والخط */
+    body {
+      background: #f7f7f7;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      direction: rtl;
+    }
+    /* تنسيق الحاوية الرئيسية */
+    .container {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 350px;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    /* تنسيق النموذج */
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin: 10px 0 5px;
+      text-align: right;
+    }
+    input {
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-align: right;
+    }
+    button {
+      padding: 10px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #responseMessage {
+      margin-top: 15px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+   
+  <div class="container">
+    <h1>نموذج التسجيل</h1>
+
+    <form id="registrationForm">
+      <label for="name">الاسم:</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="email">البريد الإلكتروني:</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="phone">رقم الهاتف:</label>
+      <input type="text" id="phone" name="phone" required>
+
+      <button type="submit">تسجيل</button>
+    </form>
+
+    <div id="responseMessage"></div>
+  </div>
+
+  <script>
+    // التعامل مع إرسال النموذج
+    document.getElementById("registrationForm").addEventListener("submit", function(event) {
+      event.preventDefault(); // منع إعادة تحميل الصفحة
+
+      const formData = new FormData(this);
+      const data = {
+        name: formData.get("name"),
+        email: formData.get("email"),
+        phone: formData.get("phone")
+      };
+
+      // إرسال البيانات إلى السيرفر
+      fetch("/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+        // عرض رسالة النجاح أو الخطأ
+        document.getElementById("responseMessage").innerText = result.message;
+
+        // إذا كانت الرسالة "تم التسجيل بنجاح" قم بتوجيه المستخدم لتحميل الملف
+        if (result.message === "✅ تم التسجيل بنجاح!") {
+          window.location.href = "/download";
+        }
+      })
+      .catch(error => {
+        document.getElementById("responseMessage").innerText = "❌ حدث خطأ!";
+      });
+    });
+  </script>
+</body>
+</html>
